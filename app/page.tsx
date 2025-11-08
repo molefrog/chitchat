@@ -60,19 +60,26 @@ const integrations = [
 export default function Dashboard() {
   return (
     <div className="flex min-h-screen flex-col items-center p-8">
+      <div className="fixed top-6 left-8">
+        <Image src="/mockmock.svg" alt="MockMock" width={100} height={40} />
+      </div>
       <div className="w-full max-w-4xl">
-        <header className="mb-12 pt-12">
+        <header className="mb-12 pt-20">
           <h1 className="text-4xl tracking-tight font-bold text-zinc-900">
-            Welcome to MockMock Inc.
+            Evan, welcome to MockMock Inc.
           </h1>
-          <p className="mt-2 text-zinc-500 text-lg">
+          <p className="mt-2 text-zinc-500 text-xl">
             Here is what has been happening at the company recently
           </p>
         </header>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-1 lg:grid-cols-2 auto-rows-fr">
           {conversations.map((conversation) => (
-            <Link key={conversation.id} href={`/chats/${conversation.id}`} className="group block ">
+            <Link
+              key={conversation.id}
+              href={`/chats/${conversation.id}?title=${encodeURIComponent(conversation.title)}`}
+              className="group block "
+            >
               <div className="overflow-hidden rounded-lg bg-zinc-100 flex gap-4 p-2.5 items-center relative">
                 <div className="aspect-square w-26 h-26 rounded-lg bg-white shadow-ds-border-small p-1 -rotate-1">
                   <div className="w-full h-full bg-zinc-200 rounded-md"></div>
@@ -103,7 +110,11 @@ export default function Dashboard() {
           <h2 className="text-3xl font-bold text-zinc-900 mb-6">Integrations</h2>
           <div className="flex flex-col gap-3.5">
             {integrations.map((integration) => (
-              <Link key={integration.id} href={`/chats/${integration.id}`} className="group block">
+              <Link
+                key={integration.id}
+                href={`/chats/${integration.id}?title=${encodeURIComponent(integration.title)}`}
+                className="group block"
+              >
                 <div className="overflow-hidden rounded-lg bg-zinc-100 px-6 py-6 flex items-center gap-8">
                   <div className="w-14 h-14 border border-zinc-200 rounded-xl shrink-0 ml-2 flex items-center justify-center bg-white">
                     <Image src="/notion-logo.svg" alt="Notion" width={32} height={32} />
@@ -119,7 +130,7 @@ export default function Dashboard() {
                         {format(integration.date, "MMMM d, HH:mm")}
                       </span>
                     </div>
-                    <p className="text-base text-pretty text-zinc-500 line-clamp-3 mr-8 leading-relaxed">
+                    <p className="text-base text-pretty text-zinc-600 line-clamp-3 mr-8 leading-relaxed">
                       {integration.description}
                     </p>
                   </div>

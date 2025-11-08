@@ -1,12 +1,17 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useChat } from '@ai-sdk/react';
-import { DefaultChatTransport, lastAssistantMessageIsCompleteWithToolCalls } from 'ai';
-import { Whiteboard } from '../../whiteboard';
-import { useWhiteboardStore } from '../../whiteboard-store';
+import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { Undo2 } from "lucide-react";
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport, lastAssistantMessageIsCompleteWithToolCalls } from "ai";
+import { Whiteboard } from "../../whiteboard";
+import { useWhiteboardStore } from "../../whiteboard-store";
 
 export default function ChatPage() {
+  const searchParams = useSearchParams();
+  const title = searchParams.get("title") || "New chat";
   const clusters = useWhiteboardStore((state) => state.clusters);
   const addCardToStore = useWhiteboardStore((state) => state.addCard);
   const updateCardInStore = useWhiteboardStore((state) => state.updateCard);
@@ -17,7 +22,7 @@ export default function ChatPage() {
 
   const { messages, sendMessage, status, addToolOutput } = useChat({
     transport: new DefaultChatTransport({
-      api: '/api/chat',
+      api: "/api/chat",
     }),
 
     sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
@@ -29,38 +34,38 @@ export default function ChatPage() {
         return;
       }
 
-      if (toolCall.toolName === 'logMessage') {
+      if (toolCall.toolName === "logMessage") {
         const input = toolCall.input as { message: string };
-        console.log('Tool called with message:', input.message);
+        console.log("Tool called with message:", input.message);
 
         // No await - avoids potential deadlocks
         addToolOutput({
-          tool: 'logMessage',
+          tool: "logMessage",
           toolCallId: toolCall.toolCallId,
-          output: 'Message logged to console',
+          output: "Message logged to console",
         });
       }
 
-      if (toolCall.toolName === 'getWhiteboard') {
+      if (toolCall.toolName === "getWhiteboard") {
         const whiteboardState = JSON.stringify({ clusters }, null, 2);
 
         addToolOutput({
-          tool: 'getWhiteboard',
+          tool: "getWhiteboard",
           toolCallId: toolCall.toolCallId,
           output: whiteboardState,
         });
       }
 
-      if (toolCall.toolName === 'addCard') {
+      if (toolCall.toolName === "addCard") {
         const input = toolCall.input as {
           id: string;
-          color: 'red' | 'blue' | 'green' | 'yellow';
+          color: "red" | "blue" | "green" | "yellow";
           text: string;
           cluster?: string;
         };
 
         addCardToStore(
-          { id: input.id, type: 'card', color: input.color, text: input.text, tag: null },
+          { id: input.id, type: "card", color: input.color, text: input.text, tag: null },
           input.cluster
         );
 
@@ -70,13 +75,13 @@ export default function ChatPage() {
           2
         );
         addToolOutput({
-          tool: 'addCard',
+          tool: "addCard",
           toolCallId: toolCall.toolCallId,
           output: whiteboardState,
         });
       }
 
-      if (toolCall.toolName === 'updateCard') {
+      if (toolCall.toolName === "updateCard") {
         const input = toolCall.input as {
           id: string;
           tag?: string;
@@ -97,13 +102,13 @@ export default function ChatPage() {
           2
         );
         addToolOutput({
-          tool: 'updateCard',
+          tool: "updateCard",
           toolCallId: toolCall.toolCallId,
           output: whiteboardState,
         });
       }
 
-      if (toolCall.toolName === 'removeCard') {
+      if (toolCall.toolName === "removeCard") {
         const input = toolCall.input as { id: string };
 
         removeCardFromStore(input.id);
@@ -114,13 +119,13 @@ export default function ChatPage() {
           2
         );
         addToolOutput({
-          tool: 'removeCard',
+          tool: "removeCard",
           toolCallId: toolCall.toolCallId,
           output: whiteboardState,
         });
       }
 
-      if (toolCall.toolName === 'removeCluster') {
+      if (toolCall.toolName === "removeCluster") {
         const input = toolCall.input as { id: string };
 
         removeClusterFromStore(input.id);
@@ -131,13 +136,13 @@ export default function ChatPage() {
           2
         );
         addToolOutput({
-          tool: 'removeCluster',
+          tool: "removeCluster",
           toolCallId: toolCall.toolCallId,
           output: whiteboardState,
         });
       }
 
-      if (toolCall.toolName === 'clearWhiteboard') {
+      if (toolCall.toolName === "clearWhiteboard") {
         clearWhiteboard();
 
         const whiteboardState = JSON.stringify(
@@ -146,124 +151,132 @@ export default function ChatPage() {
           2
         );
         addToolOutput({
-          tool: 'clearWhiteboard',
+          tool: "clearWhiteboard",
           toolCallId: toolCall.toolCallId,
           output: whiteboardState,
         });
       }
     },
   });
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-50 p-4 dark:bg-black">
-      <div className="flex h-[600px] w-full max-w-6xl gap-4">
-        <main className="flex h-full w-full max-w-2xl flex-col rounded-lg border border-zinc-200 bg-white shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="border-b border-zinc-200 p-4 dark:border-zinc-800">
-          <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">
-            Chitchat
-          </h1>
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            Simple AI chat powered by GPT-4
-          </p>
-        </div>
-
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {messages.length === 0 && (
-            <div className="flex h-full items-center justify-center text-zinc-400">
-              Start a conversation...
-            </div>
-          )}
-          {messages.map((message) => (
-            <div
-              key={message.id}
-              className={`flex ${
-                message.role === 'user' ? 'justify-end' : 'justify-start'
-              }`}
-            >
-              <div
-                className={`max-w-[80%] rounded-lg px-4 py-2 ${
-                  message.role === 'user'
-                    ? 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900'
-                    : 'bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100'
-                }`}
-              >
-                {message.parts.map((part, index) => {
-                  switch (part.type) {
-                    case 'text':
-                      return <span key={index}>{part.text}</span>;
-
-                    case 'tool-getWhiteboard':
-                    case 'tool-addCard':
-                    case 'tool-updateCard':
-                    case 'tool-removeCard':
-                    case 'tool-removeCluster':
-                    case 'tool-clearWhiteboard': {
-                      const callId = part.toolCallId;
-                      const toolName = part.type.replace('tool-', '');
-
-                      switch (part.state) {
-                        case 'input-streaming':
-                        case 'input-available':
-                          return (
-                            <div key={callId} className="text-xs opacity-60 italic">
-                              🔧 {toolName}
-                            </div>
-                          );
-                        case 'output-available':
-                          return (
-                            <div key={callId} className="text-xs opacity-60 italic">
-                              ✓ {toolName}
-                            </div>
-                          );
-                        case 'output-error':
-                          return (
-                            <div key={callId} className="text-xs text-red-500">
-                              ✗ {toolName}: {part.errorText}
-                            </div>
-                          );
-                      }
-                      break;
-                    }
-
-                    default:
-                      return null;
-                  }
-                })}
+    <div className="flex h-screen bg-zinc-50 [background-image:var(--dotted-pattern-bg)]">
+      <div className="flex w-full">
+        <main className="flex h-full w-[640px] flex-col px-12 py-8">
+          <div className="shadow-ds-border-medium rounded-2xl bg-white h-full flex flex-col">
+            <div className="border-b border-zinc-200 p-4">
+              <div className="flex items-center gap-4">
+                <Link href="/" className="text-zinc-600 hover:text-zinc-900 transition-colors">
+                  <Undo2 className="w-5 h-5" />
+                </Link>
+                <h1 className="text-xl font-semibold text-zinc-900">{title}</h1>
               </div>
             </div>
-          ))}
-        </div>
 
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (input.trim()) {
-              sendMessage({ text: input });
-              setInput('');
-            }
-          }}
-          className="border-t border-zinc-200 p-4 dark:border-zinc-800"
-        >
-          <div className="flex gap-2">
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              disabled={status !== 'ready'}
-              placeholder="Type your message..."
-              className="flex-1 rounded-lg border border-zinc-200 bg-white px-4 py-2 text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:focus:ring-zinc-100 disabled:opacity-50"
-            />
-            <button
-              type="submit"
-              disabled={status !== 'ready'}
-              className="rounded-lg bg-zinc-900 px-4 py-2 font-medium text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300 disabled:opacity-50"
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              {messages.length === 0 && (
+                <div className="flex h-full items-center justify-center text-zinc-400">
+                  Start a conversation...
+                </div>
+              )}
+              {messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
+                >
+                  <div
+                    className={`max-w-[80%] rounded-lg px-4 py-2 ${
+                      message.role === "user"
+                        ? "bg-zinc-900 text-white"
+                        : "bg-zinc-100 text-zinc-900"
+                    }`}
+                  >
+                    {message.parts.map((part, index) => {
+                      switch (part.type) {
+                        case "text":
+                          return <span key={index}>{part.text}</span>;
+
+                        case "tool-getWhiteboard":
+                        case "tool-addCard":
+                        case "tool-updateCard":
+                        case "tool-removeCard":
+                        case "tool-removeCluster":
+                        case "tool-clearWhiteboard": {
+                          const callId = part.toolCallId;
+                          const toolName = part.type.replace("tool-", "");
+
+                          switch (part.state) {
+                            case "input-streaming":
+                            case "input-available":
+                              return (
+                                <div key={callId} className="text-xs opacity-60 italic">
+                                  🔧 {toolName}
+                                </div>
+                              );
+                            case "output-available":
+                              return (
+                                <div key={callId} className="text-xs opacity-60 italic">
+                                  ✓ {toolName}
+                                </div>
+                              );
+                            case "output-error":
+                              return (
+                                <div key={callId} className="text-xs text-red-500">
+                                  ✗ {toolName}: {part.errorText}
+                                </div>
+                              );
+                          }
+                          break;
+                        }
+
+                        default:
+                          return null;
+                      }
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (input.trim()) {
+                  sendMessage({ text: input });
+                  setInput("");
+                }
+              }}
+              className="border-t border-zinc-200 p-4"
             >
-              Send
-            </button>
+              <div className="flex gap-2">
+                <input
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  disabled={status !== "ready"}
+                  placeholder="Type your message..."
+                  className="flex-1 rounded-lg border border-zinc-200 bg-white px-4 py-2 text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 disabled:opacity-50 text-lg"
+                />
+                <button
+                  type="submit"
+                  disabled={status !== "ready"}
+                  className="rounded-lg text-lg font-medium text-white transition-colors disabled:opacity-50 px-4 py-2"
+                  style={{
+                    background: "blue",
+                    boxShadow: "rgb(3, 18, 152) 0px -2px 0px 3px inset",
+                    textShadow: "rgb(51, 51, 51) 0px 1px 0px",
+                  }}
+                >
+                  Send
+                </button>
+              </div>
+            </form>
           </div>
-        </form>
-      </main>
-      <Whiteboard />
+        </main>
+
+        <div className="flex-1 p-8">
+          <Whiteboard />
+        </div>
       </div>
     </div>
   );
