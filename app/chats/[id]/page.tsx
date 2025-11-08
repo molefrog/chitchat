@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Undo2 } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, lastAssistantMessageIsCompleteWithToolCalls } from "ai";
 import { Whiteboard } from "../../whiteboard";
@@ -195,7 +196,11 @@ export default function ChatPage() {
                     {message.parts.map((part, index) => {
                       switch (part.type) {
                         case "text":
-                          return <span key={index}>{part.text}</span>;
+                          return (
+                            <div key={index} className=" max-w-none">
+                              <ReactMarkdown>{part.text}</ReactMarkdown>
+                            </div>
+                          );
 
                         case "tool-getWhiteboard":
                         case "tool-addCard":
