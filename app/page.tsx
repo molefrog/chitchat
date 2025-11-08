@@ -1,269 +1,70 @@
-'use client';
+import Link from "next/link";
+import { ChevronRight, Plus } from "lucide-react";
 
-import { useState } from 'react';
-import { useChat } from '@ai-sdk/react';
-import { DefaultChatTransport, lastAssistantMessageIsCompleteWithToolCalls } from 'ai';
-import { Whiteboard } from './whiteboard';
-import { useWhiteboardStore } from './whiteboard-store';
+const conversations = [
+  {
+    id: "1",
+    title: "Building a SaaS Product",
+    description: "Team structure and product roadmap",
+  },
+  {
+    id: "2",
+    title: "Understanding AI Agents",
+    description: "How autonomous agents work and how they can be used to build a better future",
+  },
+  {
+    id: "3",
+    title: "Project Timeline Management",
+    description: "Sprint planning and task allocation",
+  },
+  {
+    id: "4",
+    title: "Company Reorganization",
+    description: "New org chart after merger",
+  },
+];
 
-export default function Home() {
-  const clusters = useWhiteboardStore((state) => state.clusters);
-  const addCardToStore = useWhiteboardStore((state) => state.addCard);
-  const updateCardInStore = useWhiteboardStore((state) => state.updateCard);
-  const removeCardFromStore = useWhiteboardStore((state) => state.removeCard);
-  const removeClusterFromStore = useWhiteboardStore((state) => state.removeCluster);
-  const moveCardToCluster = useWhiteboardStore((state) => state.moveCardToCluster);
-  const clearWhiteboard = useWhiteboardStore((state) => state.clearWhiteboard);
-
-  const { messages, sendMessage, status, addToolOutput } = useChat({
-    transport: new DefaultChatTransport({
-      api: '/api/chat',
-    }),
-
-    sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
-
-    // run client-side tools that are automatically executed:
-    async onToolCall({ toolCall }) {
-      // Check if it's a dynamic tool first for proper type narrowing
-      if (toolCall.dynamic) {
-        return;
-      }
-
-      if (toolCall.toolName === 'logMessage') {
-        const input = toolCall.input as { message: string };
-        console.log('Tool called with message:', input.message);
-
-        // No await - avoids potential deadlocks
-        addToolOutput({
-          tool: 'logMessage',
-          toolCallId: toolCall.toolCallId,
-          output: 'Message logged to console',
-        });
-      }
-
-      if (toolCall.toolName === 'getWhiteboard') {
-        const whiteboardState = JSON.stringify({ clusters }, null, 2);
-
-        addToolOutput({
-          tool: 'getWhiteboard',
-          toolCallId: toolCall.toolCallId,
-          output: whiteboardState,
-        });
-      }
-
-      if (toolCall.toolName === 'addCard') {
-        const input = toolCall.input as {
-          id: string;
-          color: 'red' | 'blue' | 'green' | 'yellow';
-          text: string;
-          cluster?: string;
-        };
-
-        addCardToStore(
-          { id: input.id, type: 'card', color: input.color, text: input.text, tag: null },
-          input.cluster
-        );
-
-        const whiteboardState = JSON.stringify(
-          { clusters: useWhiteboardStore.getState().clusters },
-          null,
-          2
-        );
-        addToolOutput({
-          tool: 'addCard',
-          toolCallId: toolCall.toolCallId,
-          output: whiteboardState,
-        });
-      }
-
-      if (toolCall.toolName === 'updateCard') {
-        const input = toolCall.input as {
-          id: string;
-          tag?: string;
-          cluster?: string;
-        };
-
-        if (input.cluster) {
-          moveCardToCluster(input.id, input.cluster);
-        }
-
-        if (input.tag !== undefined) {
-          updateCardInStore(input.id, { tag: input.tag });
-        }
-
-        const whiteboardState = JSON.stringify(
-          { clusters: useWhiteboardStore.getState().clusters },
-          null,
-          2
-        );
-        addToolOutput({
-          tool: 'updateCard',
-          toolCallId: toolCall.toolCallId,
-          output: whiteboardState,
-        });
-      }
-
-      if (toolCall.toolName === 'removeCard') {
-        const input = toolCall.input as { id: string };
-
-        removeCardFromStore(input.id);
-
-        const whiteboardState = JSON.stringify(
-          { clusters: useWhiteboardStore.getState().clusters },
-          null,
-          2
-        );
-        addToolOutput({
-          tool: 'removeCard',
-          toolCallId: toolCall.toolCallId,
-          output: whiteboardState,
-        });
-      }
-
-      if (toolCall.toolName === 'removeCluster') {
-        const input = toolCall.input as { id: string };
-
-        removeClusterFromStore(input.id);
-
-        const whiteboardState = JSON.stringify(
-          { clusters: useWhiteboardStore.getState().clusters },
-          null,
-          2
-        );
-        addToolOutput({
-          tool: 'removeCluster',
-          toolCallId: toolCall.toolCallId,
-          output: whiteboardState,
-        });
-      }
-
-      if (toolCall.toolName === 'clearWhiteboard') {
-        clearWhiteboard();
-
-        const whiteboardState = JSON.stringify(
-          { clusters: useWhiteboardStore.getState().clusters },
-          null,
-          2
-        );
-        addToolOutput({
-          tool: 'clearWhiteboard',
-          toolCallId: toolCall.toolCallId,
-          output: whiteboardState,
-        });
-      }
-    },
-  });
-  const [input, setInput] = useState('');
-
+export default function Dashboard() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-50 p-4 dark:bg-black">
-      <div className="flex h-[600px] w-full max-w-6xl gap-4">
-        <main className="flex h-full w-full max-w-2xl flex-col rounded-lg border border-zinc-200 bg-white shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="border-b border-zinc-200 p-4 dark:border-zinc-800">
-          <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">
-            Chitchat
+    <div className="flex min-h-screen flex-col items-center p-8">
+      <div className="w-full max-w-4xl">
+        <header className="mb-12 pt-12">
+          <h1 className="text-4xl tracking-tight font-bold text-zinc-900">
+            Welcome to MockMock Inc.
           </h1>
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            Simple AI chat powered by GPT-4
+          <p className="mt-2 text-zinc-500 text-lg">
+            Here is what has been happening at the company recently
           </p>
-        </div>
+        </header>
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {messages.length === 0 && (
-            <div className="flex h-full items-center justify-center text-zinc-400">
-              Start a conversation...
-            </div>
-          )}
-          {messages.map((message) => (
-            <div
-              key={message.id}
-              className={`flex ${
-                message.role === 'user' ? 'justify-end' : 'justify-start'
-              }`}
-            >
-              <div
-                className={`max-w-[80%] rounded-lg px-4 py-2 ${
-                  message.role === 'user'
-                    ? 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900'
-                    : 'bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100'
-                }`}
-              >
-                {message.parts.map((part, index) => {
-                  switch (part.type) {
-                    case 'text':
-                      return <span key={index}>{part.text}</span>;
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-1 lg:grid-cols-2 auto-rows-fr">
+          {conversations.map((conversation) => (
+            <Link key={conversation.id} href={`/chats/${conversation.id}`} className="group block ">
+              <div className="overflow-hidden rounded-lg bg-zinc-100 flex gap-4 p-2.5 items-center relative">
+                <div className="aspect-square w-26 h-26 rounded-lg bg-white shadow-ds-border-small p-1 -rotate-1">
+                  <div className="w-full h-full bg-zinc-200 rounded-md"></div>
+                </div>
+                <div className="ml-2 flex-1">
+                  <p className="mt-1 text-lg/snug text-zinc-900 text-medium line-clamp-2">
+                    {conversation.description}
+                  </p>
+                </div>
+                <ChevronRight className="w-6 h-6 text-zinc-700 opacity-0 group-hover:opacity-100 transition-opacity mr-2 ml-1" />
+              </div>
+            </Link>
+          ))}
 
-                    case 'tool-getWhiteboard':
-                    case 'tool-addCard':
-                    case 'tool-updateCard':
-                    case 'tool-removeCard':
-                    case 'tool-removeCluster':
-                    case 'tool-clearWhiteboard': {
-                      const callId = part.toolCallId;
-                      const toolName = part.type.replace('tool-', '');
-
-                      switch (part.state) {
-                        case 'input-streaming':
-                        case 'input-available':
-                          return (
-                            <div key={callId} className="text-xs opacity-60 italic">
-                              🔧 {toolName}
-                            </div>
-                          );
-                        case 'output-available':
-                          return (
-                            <div key={callId} className="text-xs opacity-60 italic">
-                              ✓ {toolName}
-                            </div>
-                          );
-                        case 'output-error':
-                          return (
-                            <div key={callId} className="text-xs text-red-500">
-                              ✗ {toolName}: {part.errorText}
-                            </div>
-                          );
-                      }
-                      break;
-                    }
-
-                    default:
-                      return null;
-                  }
-                })}
+          <Link href="/chats/new" className="group block h-full">
+            <div className="overflow-hidden rounded-lg bg-zinc-100 flex gap-4 p-2.5 items-center relative h-full justify-center">
+              <div className="flex items-center gap-3 ml-2 group">
+                <Plus className="w-6.5 h-6.5 text-zinc-400 group-hover:text-zinc-500 transition-colors" />
+                <p className="text-xl text-zinc-400 font-bold group-hover:text-zinc-500 transition-colors">
+                  New Canvas
+                </p>
               </div>
             </div>
-          ))}
+          </Link>
         </div>
-
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (input.trim()) {
-              sendMessage({ text: input });
-              setInput('');
-            }
-          }}
-          className="border-t border-zinc-200 p-4 dark:border-zinc-800"
-        >
-          <div className="flex gap-2">
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              disabled={status !== 'ready'}
-              placeholder="Type your message..."
-              className="flex-1 rounded-lg border border-zinc-200 bg-white px-4 py-2 text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:focus:ring-zinc-100 disabled:opacity-50"
-            />
-            <button
-              type="submit"
-              disabled={status !== 'ready'}
-              className="rounded-lg bg-zinc-900 px-4 py-2 font-medium text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300 disabled:opacity-50"
-            >
-              Send
-            </button>
-          </div>
-        </form>
-      </main>
-      <Whiteboard />
       </div>
     </div>
   );

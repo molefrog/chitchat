@@ -3,6 +3,7 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  font-family: SFRounded, ui-rounded, "SF Pro Rounded", "Comic Sans MS", system-ui, sans-serif;
 }
 
 @theme inline {
@@ -10,17 +11,39 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  --font-sans: Geist, ui-sans-serif, system-ui;
+  --font-mono: var(--font-roboto-mono), ui-monospace, SFMono-Regular;
+  --font-roboto: var(--font-roboto), Arial, Helvetica, sans-serif;
+  --font-manrope: var(--font-manrope), Arial, Helvetica, sans-serif;
+
+  /* Custom shadows */
+  --shadow-ds-border: 0 0 0 1px rgba(0, 0, 0, 0.08);
+  --shadow-ds-small: 0px 2px 2px rgba(0, 0, 0, 0.04);
+  --shadow-ds-border-small: var(--shadow-ds-border), var(--shadow-ds-small);
+  --shadow-ds-medium: 0px 2px 2px rgba(0, 0, 0, 0.04), 0px 8px 8px -8px rgba(0, 0, 0, 0.04);
+  --shadow-ds-border-medium: var(--shadow-ds-border), var(--shadow-ds-medium);
+  --shadow-ds-large: 0px 2px 2px rgba(0, 0, 0, 0.04), 0px 8px 16px -4px rgba(0, 0, 0, 0.04);
+  --shadow-ds-border-large: var(--shadow-ds-border), var(--shadow-ds-large);
+  --shadow-ds-tooltip: var(--shadow-ds-border), 0px 1px 1px rgba(0, 0, 0, 0.02),
+    0px 4px 8px rgba(0, 0, 0, 0.04);
+  --shadow-ds-menu: var(--shadow-ds-border), 0px 1px 1px rgba(0, 0, 0, 0.02),
+    0px 4px 8px -4px rgba(0, 0, 0, 0.04), 0px 16px 24px -8px rgba(0, 0, 0, 0.06);
+  --shadow-ds-modal: var(--shadow-ds-border), 0px 1px 1px rgba(0, 0, 0, 0.02),
+    0px 8px 16px -4px rgba(0, 0, 0, 0.04), 0px 24px 32px -8px rgba(0, 0, 0, 0.06);
+  --shadow-ds-fullscreen: var(--shadow-ds-border), 0px 1px 1px rgba(0, 0, 0, 0.02),
+    0px 8px 16px -4px rgba(0, 0, 0, 0.04), 0px 24px 32px -8px rgba(0, 0, 0, 0.06);
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
-}
+} */
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: SFRounded, ui-rounded, "SF Pro Rounded", "Comic Sans MS", system-ui, sans-serif;
 }
