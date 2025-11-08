@@ -28,32 +28,60 @@ const conversations = [
 
 const integrations = [
   {
-    id: "int-1",
-    title: "New project Apollo discussion",
+    id: "f0c37170-f799-46ad-8c63-d25c9ef402b7",
+    title: "15-Min Summary: Nov 8, 15:00-15:15 UTC",
     description:
-      "Discussing the initial phases of Project Apollo, including team assignments, timeline expectations, and key deliverables for Q1. We need to align on the technical stack and infrastructure requirements.",
-    date: new Date(2024, 10, 8, 13, 30), // November 8, 13:30
+      "Three new employee profiles created (Harper Nguyen, Indira Kapoor, Samir Desai). Flags project updated with full team roster and planning doc. Website refresh pricing table v1 completed. Q4 lead gen landing page visuals drafted.",
+    date: new Date("2025-11-08T15:16:11.43405+00:00"),
   },
   {
-    id: "int-2",
-    title: "Q4 Budget Review Meeting",
+    id: "7d923cd0-c3b0-44c6-8d2e-e44472b420b4",
+    title: "Hourly Summary: Nov 8, 14:00-15:00 UTC",
     description:
-      "Comprehensive review of Q4 spending across all departments. Topics include cost optimization opportunities, resource allocation for upcoming projects, and financial projections for the next quarter.",
-    date: new Date(2024, 10, 6, 14, 15), // November 6, 14:15
+      "Hero section shipped. Flags of the World project kicked off with cross-functional team assignments across Product, Marketing, and Ops.",
+    date: new Date("2025-11-08T15:00:57.903589+00:00"),
   },
   {
-    id: "int-3",
-    title: "Product Roadmap Planning Session",
+    id: "089a1457-d406-4c2b-9d73-b417e4a94f6d",
+    title: "Flags Project Kickoff Hour",
     description:
-      "Strategic planning session to define our product roadmap for 2024. We'll prioritize features based on customer feedback, market research, and technical feasibility to ensure we stay competitive.",
-    date: new Date(2024, 10, 3, 10, 0), // November 3, 10:00
+      "New project \"Flags of the World\" kicked off by Ops team (Nadia Volkov, Elias Haddock). Q4 lead gen and Website refresh projects progressing. Sales working on pricing tiers.",
+    date: new Date("2025-11-08T14:00:48.415031+00:00"),
   },
   {
-    id: "int-4",
-    title: "Engineering Team Standup",
+    id: "aadca968-6032-4eba-ad21-c24c8a0b6fa5",
+    title: "Cross-Team Collaboration Snapshot",
     description:
-      "Weekly engineering sync to discuss current sprint progress, blockers, and upcoming tasks. The team will share updates on backend optimization, frontend improvements, and infrastructure scaling efforts.",
-    date: new Date(2024, 10, 1, 9, 30), // November 1, 9:30
+      "Nineteen people across five teams are working on six major projects. The holiday marketing campaign is more than halfway done but Project Apollo is waiting on Marketing assets. Several high priority items need cross-team coordination.",
+    date: new Date("2025-11-08T13:10:26.126152+00:00"),
+  },
+  {
+    id: "c3ec16f8-73a0-44d0-9266-da7658d53d18",
+    title: "Four Completions Progress Update",
+    description:
+      "Twenty documents got updates with four tasks completed, eleven making progress, and five new ones created. The big focus is on the holiday lead generation campaign and rolling out new pricing.",
+    date: new Date("2025-11-08T12:00:00+00:00"),
+  },
+  {
+    id: "fa4af9b9-08cf-426b-9db6-606358aacf4d",
+    title: "Website and Campaign Launch",
+    description:
+      "Teams across Product, Sales, Marketing, Finance, and Ops are collaborating on the Website Refresh launching early December and a major lead generation campaign wrapping up before the holidays.",
+    date: new Date("2025-11-08T10:00:00+00:00"),
+  },
+  {
+    id: "b6414f65-18b7-49e9-9262-59febc3c9853",
+    title: "CRM Contacts Win Rate",
+    description:
+      "Recent activity shows contacts at Acme, Nordic Bikes, and Copenhagen Coffee. Product teams are driving the Website Refresh and holiday lead gen while Sales improved their win rate and Marketing brought down cost per lead.",
+    date: new Date("2025-11-07T18:00:00+00:00"),
+  },
+  {
+    id: "7fee814c-fa47-4e9e-8a89-a0f13aa2f5f4",
+    title: "Twenty Members Apollo Blitz",
+    description:
+      "Twenty team members are actively working together on Project Apollo, the holiday marketing blitz, reliability improvements, and the new pricing rollout with lots of coordination between Finance, Marketing, and Sales.",
+    date: new Date("2025-11-07T11:00:00+00:00"),
   },
 ];
 
