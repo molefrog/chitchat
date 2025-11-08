@@ -14,11 +14,13 @@ export default function ChatPage() {
   const searchParams = useSearchParams();
   const title = searchParams.get("title") || "New chat";
   const clusters = useWhiteboardStore((state) => state.clusters);
+  const caption = useWhiteboardStore((state) => state.caption);
   const addCardToStore = useWhiteboardStore((state) => state.addCard);
   const updateCardInStore = useWhiteboardStore((state) => state.updateCard);
   const removeCardFromStore = useWhiteboardStore((state) => state.removeCard);
   const removeClusterFromStore = useWhiteboardStore((state) => state.removeCluster);
   const moveCardToCluster = useWhiteboardStore((state) => state.moveCardToCluster);
+  const setCaption = useWhiteboardStore((state) => state.setCaption);
   const clearWhiteboard = useWhiteboardStore((state) => state.clearWhiteboard);
 
   const { messages, sendMessage, status, addToolOutput } = useChat({
@@ -48,10 +50,27 @@ export default function ChatPage() {
       }
 
       if (toolCall.toolName === "getWhiteboard") {
-        const whiteboardState = JSON.stringify({ clusters }, null, 2);
+        const whiteboardState = JSON.stringify({ clusters, caption }, null, 2);
 
         addToolOutput({
           tool: "getWhiteboard",
+          toolCallId: toolCall.toolCallId,
+          output: whiteboardState,
+        });
+      }
+
+      if (toolCall.toolName === "setCaption") {
+        const input = toolCall.input as { caption: string };
+
+        setCaption(input.caption);
+
+        const whiteboardState = JSON.stringify(
+          { clusters: useWhiteboardStore.getState().clusters, caption: input.caption },
+          null,
+          2
+        );
+        addToolOutput({
+          tool: "setCaption",
           toolCallId: toolCall.toolCallId,
           output: whiteboardState,
         });
@@ -207,6 +226,7 @@ export default function ChatPage() {
                         case "tool-updateCard":
                         case "tool-removeCard":
                         case "tool-removeCluster":
+                        case "tool-setCaption":
                         case "tool-clearWhiteboard": {
                           const callId = part.toolCallId;
                           const toolName = part.type.replace("tool-", "");

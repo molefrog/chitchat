@@ -6,9 +6,17 @@ import { WhiteboardCard } from "./whiteboard-card";
 
 export function Whiteboard() {
   const clusters = useWhiteboardStore((state) => state.clusters);
+  const caption = useWhiteboardStore((state) => state.caption);
 
   return (
     <div className="flex h-full w-full flex-col rounded-lg">
+      {caption && (
+        <div className="px-8 pt-8 pb-4">
+          <div className="text-center text-2xl font-medium text-zinc-900 bg-zinc-100 rounded-lg px-6 py-3">
+            {caption}
+          </div>
+        </div>
+      )}
       <div className="flex-1 overflow-y-auto flex items-center justify-center">
         <div
           className="grid gap-4"
@@ -17,10 +25,7 @@ export function Whiteboard() {
           }}
         >
           {clusters.map((cluster) => (
-            <div
-              key={cluster.name}
-              className="flex flex-col gap-2 rounded-2xl bg-slate-400/10 p-4"
-            >
+            <div key={cluster.name} className="flex flex-col gap-2 rounded-2xl bg-slate-400/10 p-4">
               <div className="text-base font-bold uppercase tracking-wide text-zinc-600 mb-2">
                 {cluster.name}
               </div>

@@ -17,11 +17,13 @@ export interface Cluster {
 
 export interface WhiteboardState {
   clusters: Cluster[];
+  caption: string;
   addCard: (card: Card, clusterName?: string) => void;
   updateCard: (cardId: string, updates: Partial<Omit<Card, 'id' | 'type'>>) => void;
   removeCard: (cardId: string) => void;
   removeCluster: (clusterName: string) => void;
   moveCardToCluster: (cardId: string, targetClusterName: string) => void;
+  setCaption: (caption: string) => void;
   clearWhiteboard: () => void;
 }
 
@@ -54,6 +56,7 @@ export const useWhiteboardStore = create<WhiteboardState>((set) => ({
       ],
     },
   ],
+  caption: '',
 
   addCard: (card, clusterName = 'default') =>
     set((state) => {
@@ -134,5 +137,7 @@ export const useWhiteboardStore = create<WhiteboardState>((set) => ({
       return { clusters: newClusters };
     }),
 
-  clearWhiteboard: () => set({ clusters: [] }),
+  setCaption: (caption) => set({ caption }),
+
+  clearWhiteboard: () => set({ clusters: [], caption: '' }),
 }));
