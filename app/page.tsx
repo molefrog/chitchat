@@ -25,7 +25,8 @@ export default function Home() {
       }
 
       if (toolCall.toolName === 'logMessage') {
-        console.log('Tool called with message:', toolCall.input.message);
+        const input = toolCall.input as { message: string };
+        console.log('Tool called with message:', input.message);
 
         // No await - avoids potential deadlocks
         addToolOutput({
@@ -46,17 +47,22 @@ export default function Home() {
       }
 
       if (toolCall.toolName === 'addCard') {
-        const { id, color, text, cluster } = toolCall.input;
+        const input = toolCall.input as {
+          id: string;
+          color: 'red' | 'blue' | 'green' | 'yellow';
+          text: string;
+          cluster?: string;
+        };
 
         addCardToStore(
-          { id, type: 'card', color, text, tag: null },
-          cluster
+          { id: input.id, type: 'card', color: input.color, text: input.text, tag: null },
+          input.cluster
         );
 
         addToolOutput({
           tool: 'addCard',
           toolCallId: toolCall.toolCallId,
-          output: `Card "${text}" with id "${id}" added successfully`,
+          output: `Card "${input.text}" with id "${input.id}" added successfully`,
         });
       }
     },
@@ -120,7 +126,7 @@ export default function Home() {
                         case 'output-available':
                           return (
                             <div key={callId} className="text-sm opacity-70">
-                              {part.output}
+                              {String(part.output)}
                             </div>
                           );
                         case 'output-error':
