@@ -12,7 +12,7 @@ export function Whiteboard() {
         <div
           className="grid gap-4"
           style={{
-            gridTemplateColumns: `repeat(${Math.min(clusters.length, 3)}, minmax(0, 1fr))`,
+            gridTemplateColumns: `repeat(${Math.min(clusters.length, 2)}, minmax(0, 1fr))`,
             justifyContent: "center",
           }}
         >
@@ -23,7 +23,7 @@ export function Whiteboard() {
                   {cluster.label}
                 </div>
               )}
-              <div className="flex flex-col gap-2">
+              <div className="grid grid-cols-4 gap-1.5">
                 {cluster.props.map((card) => (
                   <WhiteboardCard key={card.id} card={card} />
                 ))}
