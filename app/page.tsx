@@ -2,13 +2,34 @@
 
 import { useState } from 'react';
 import { useChat } from '@ai-sdk/react';
-import { DefaultChatTransport } from 'ai';
+import { DefaultChatTransport, lastAssistantMessageIsCompleteWithToolCalls } from 'ai';
 
 export default function Home() {
-  const { messages, sendMessage, status } = useChat({
+  const { messages, sendMessage, status, addToolOutput } = useChat({
     transport: new DefaultChatTransport({
       api: '/api/chat',
     }),
+
+    sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
+
+    // run client-side tools that are automatically executed:
+    async onToolCall({ toolCall }) {
+      // Check if it's a dynamic tool first for proper type narrowing
+      if (toolCall.dynamic) {
+        return;
+      }
+
+      if (toolCall.toolName === 'logMessage') {
+        console.log('Tool called with message:', toolCall.input.message);
+
+        // No await - avoids potential deadlocks
+        addToolOutput({
+          tool: 'logMessage',
+          toolCallId: toolCall.toolCallId,
+          output: 'Message logged to console',
+        });
+      }
+    },
   });
   const [input, setInput] = useState('');
 
@@ -44,9 +65,47 @@ export default function Home() {
                     : 'bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100'
                 }`}
               >
-                {message.parts.map((part, index) =>
-                  part.type === 'text' ? <span key={index}>{part.text}</span> : null
-                )}
+                {message.parts.map((part, index) => {
+                  switch (part.type) {
+                    case 'text':
+                      return <span key={index}>{part.text}</span>;
+
+                    case 'tool-logMessage': {
+                      const callId = part.toolCallId;
+
+                      switch (part.state) {
+                        case 'input-streaming':
+                          return (
+                            <div key={callId} className="text-sm opacity-70">
+                              Preparing to log message...
+                            </div>
+                          );
+                        case 'input-available':
+                          return (
+                            <div key={callId} className="text-sm opacity-70">
+                              Logging message to console...
+                            </div>
+                          );
+                        case 'output-available':
+                          return (
+                            <div key={callId} className="text-sm opacity-70">
+                              {part.output}
+                            </div>
+                          );
+                        case 'output-error':
+                          return (
+                            <div key={callId} className="text-sm text-red-500">
+                              Error: {part.errorText}
+                            </div>
+                          );
+                      }
+                      break;
+                    }
+
+                    default:
+                      return null;
+                  }
+                })}
               </div>
             </div>
           ))}
