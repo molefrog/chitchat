@@ -9,6 +9,11 @@ import { useWhiteboardStore } from './whiteboard-store';
 export default function Home() {
   const clusters = useWhiteboardStore((state) => state.clusters);
   const addCardToStore = useWhiteboardStore((state) => state.addCard);
+  const updateCardInStore = useWhiteboardStore((state) => state.updateCard);
+  const removeCardFromStore = useWhiteboardStore((state) => state.removeCard);
+  const removeClusterFromStore = useWhiteboardStore((state) => state.removeCluster);
+  const moveCardToCluster = useWhiteboardStore((state) => state.moveCardToCluster);
+  const clearWhiteboard = useWhiteboardStore((state) => state.clearWhiteboard);
 
   const { messages, sendMessage, status, addToolOutput } = useChat({
     transport: new DefaultChatTransport({
@@ -59,10 +64,70 @@ export default function Home() {
           input.cluster
         );
 
+        const whiteboardState = JSON.stringify({ clusters }, null, 2);
         addToolOutput({
           tool: 'addCard',
           toolCallId: toolCall.toolCallId,
-          output: `Card "${input.text}" with id "${input.id}" added successfully`,
+          output: whiteboardState,
+        });
+      }
+
+      if (toolCall.toolName === 'updateCard') {
+        const input = toolCall.input as {
+          id: string;
+          tag?: string;
+          cluster?: string;
+        };
+
+        if (input.cluster) {
+          moveCardToCluster(input.id, input.cluster);
+        }
+
+        if (input.tag !== undefined) {
+          updateCardInStore(input.id, { tag: input.tag });
+        }
+
+        const whiteboardState = JSON.stringify({ clusters }, null, 2);
+        addToolOutput({
+          tool: 'updateCard',
+          toolCallId: toolCall.toolCallId,
+          output: whiteboardState,
+        });
+      }
+
+      if (toolCall.toolName === 'removeCard') {
+        const input = toolCall.input as { id: string };
+
+        removeCardFromStore(input.id);
+
+        const whiteboardState = JSON.stringify({ clusters }, null, 2);
+        addToolOutput({
+          tool: 'removeCard',
+          toolCallId: toolCall.toolCallId,
+          output: whiteboardState,
+        });
+      }
+
+      if (toolCall.toolName === 'removeCluster') {
+        const input = toolCall.input as { id: string };
+
+        removeClusterFromStore(input.id);
+
+        const whiteboardState = JSON.stringify({ clusters }, null, 2);
+        addToolOutput({
+          tool: 'removeCluster',
+          toolCallId: toolCall.toolCallId,
+          output: whiteboardState,
+        });
+      }
+
+      if (toolCall.toolName === 'clearWhiteboard') {
+        clearWhiteboard();
+
+        addToolOutput({
+          tool: 'clearWhiteboard',
+          toolCallId: toolCall.toolCallId,
+          output: '{"clusters":[]}',
         });
       }
     },

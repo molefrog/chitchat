@@ -23,6 +23,7 @@ export interface WhiteboardState {
   removeCard: (cardId: string) => void;
   removeCluster: (clusterId: string) => void;
   moveCardToCluster: (cardId: string, targetClusterId: string) => void;
+  clearWhiteboard: () => void;
 }
 
 export const useWhiteboardStore = create<WhiteboardState>((set) => ({
@@ -131,4 +132,6 @@ export const useWhiteboardStore = create<WhiteboardState>((set) => ({
 
       return { clusters: newClusters };
     }),
+
+  clearWhiteboard: () => set({ clusters: [] }),
 }));
