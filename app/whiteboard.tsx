@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { useWhiteboardStore } from "./whiteboard-store";
 import { WhiteboardCard } from "./whiteboard-card";
 
@@ -9,14 +9,23 @@ export function Whiteboard() {
   const caption = useWhiteboardStore((state) => state.caption);
 
   return (
-    <div className="flex h-full w-full flex-col rounded-lg">
-      {caption && (
-        <div className="px-8 pt-8 pb-4">
-          <div className="text-center text-2xl font-medium text-zinc-900 bg-zinc-100 rounded-lg px-6 py-3">
-            {caption}
-          </div>
-        </div>
-      )}
+    <div className="relative flex h-full w-full flex-col rounded-lg">
+      <AnimatePresence mode="wait">
+        {caption && (
+          <motion.div
+            key={caption}
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+            className="absolute top-8 left-1/2 -translate-x-1/2 z-10 max-w-3xl"
+          >
+            <div className="text-center text-2xl font-medium text-zinc-900 bg-zinc-100/95 backdrop-blur-sm rounded-lg px-6 py-3 shadow-lg">
+              {caption}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <div className="flex-1 overflow-y-auto flex items-center justify-center">
         <div
           className="grid gap-4"

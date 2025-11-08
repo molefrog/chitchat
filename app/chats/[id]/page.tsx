@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Undo2 } from "lucide-react";
@@ -10,9 +10,45 @@ import { DefaultChatTransport, lastAssistantMessageIsCompleteWithToolCalls } fro
 import { Whiteboard } from "../../whiteboard";
 import { useWhiteboardStore } from "../../whiteboard-store";
 
+const DEMO_SUMMARY = `## Document Summary - Last 24 Hours (Nov 8, 2025) - Updated Analysis
+
+### PEOPLE
+- **Evan Gusev**: Primary author/editor across all documents; Task assignee for multiple projects (Q4 lead magnet, campaign dashboard, website redesign, pricing table, email nurture, newsletter draft); Project owner for Website Refresh and Q4 Lead Gen
+- **Alex**: Mentioned in Finance team space - tasked to budget website refresh
+
+### COMPANIES
+- **MockMock Inc**: Main company workspace with comprehensive team structure
+
+### FUNCTIONS WITHIN COMPANY
+- **Product Squad A**: API error boundary handling, billing page tests; 27 tickets done, 2.8 days median lead time; Sprint ending 2025-11-21; Blocker: awaiting sandbox credentials from Ops; Action items: test quarantine lane, stable dataset snapshots twice weekly
+- **Product Squad B**: Dashboard empty states, accessibility work, performance profiling; 31 tickets done, P95 render 0.8s; Sprint ending 2025-11-21; Action items: chart skeleton loaders, color contrast token expansion; Dedicated A11y QA hour daily
+- **Sales**: 12 demos, 3 commits, 5 in procurement; Enterprise Q4 outreach; Win rate 26%→29%, cycle time 34→32 days; Week ending 2025-11-21; Blocker: pricing approval for 2 custom deals; Action items: deal desk office hours, pricing one-pagers by tier, enablement on lead magnet
+- **Marketing**: Q4 lead magnet launch, December newsletter draft, campaign work; CPL down 12%, organic demo requests up 8%; Week ending 2025-11-21; Blocker: final CTA copy needs Product validation; Action items: A/B testing checklist, weekly messaging sync with Product
+- **Finance**: CAC/LTV dashboard updates, board finance pack prep; Close time improved by 1 day; Blocker: waiting on Marketing spend export; Action item: budget website refresh (assigned to Alex)
+- **Ops**: Synthetic checks for billing endpoints, sandbox provisioning automation; Mentioned as blocker source by Product Squad A (sandbox credentials needed)
+
+### PROJECTS
+- **Website Refresh**: Due Dec 1, 2025; Owner: Evan Gusev; Status: In progress; Tasks include redesign hero section (in progress), update pricing table (to do), accessibility audit (to do)
+- **Q4 Lead Gen**: Due Dec 20, 2025; Owner: Evan Gusev; Status: In progress; Tasks include launch Q4 lead magnet (to do, high priority), campaign dashboard (to do), email nurture setup (in progress)
+- **Sprint ending 2025-11-21**: Active sprint for Product Squad A & B
+- **Week ending 2025-11-21**: Active week for Sales, Marketing teams
+
+### STRATEGY DOCUMENTS
+- **Company Strategy FY26**: Edited Nov 8 - added review reminder; Sections: Objective, Context, Bets and rationale, Success metrics, Risks and mitigations, Timeline and owners
+- **Product Strategy**: Edited Nov 8 - add themes by Q1; Sections: Problem spaces, Themes and bets, Roadmap by quarter, Quality/performance/security bar, Research and validation plan
+- **Sales Strategy**: Edited Nov 8 - add quotas draft; Sections: ICP and qualification, Messaging and objection handling, Territory and quota, Deal desk policy, Forecast methodology
+- **Marketing Strategy**: Edited Nov 8 - add positioning v1 link; Sections: Positioning and narrative, Demand gen plays, Content and lifecycle, Measurement framework, Budget and channels
+- **Finance Strategy**: Edited Nov 8 - add FY26 forecast scenario A/B; Sections: Revenue and margin targets, Unit economics guardrails, Forecasting and scenarios, Close process and reporting
+- **Ops Strategy**: Edited Nov 8 - add SLO targets draft; Sections: Reliability targets and error budgets, Incident response, Tooling and automation roadmap, Security and compliance timeline
+
+### STANDUPS SCHEDULED
+- Multiple standup templates created for dates: 2025-11-10, 2025-11-11, 2025-11-12, 2025-11-13, 2025-11-14 across all teams`;
+
 export default function ChatPage() {
   const searchParams = useSearchParams();
   const title = searchParams.get("title") || "New chat";
+  const isDemo = searchParams.get("demo") === "true";
+  const hasAutoSent = useRef(false);
   const clusters = useWhiteboardStore((state) => state.clusters);
   const caption = useWhiteboardStore((state) => state.caption);
   const addCardToStore = useWhiteboardStore((state) => state.addCard);
@@ -179,6 +215,16 @@ export default function ChatPage() {
     },
   });
   const [input, setInput] = useState("");
+
+  // Auto-send demo message when landing on a demo page
+  useEffect(() => {
+    if (isDemo && !hasAutoSent.current && status === "ready") {
+      hasAutoSent.current = true;
+      sendMessage({
+        text: `Clear the whiteboard and explain what happened in the company based on the summary:\n\n${DEMO_SUMMARY}`,
+      });
+    }
+  }, [isDemo, status, sendMessage]);
 
   return (
     <div className="flex h-screen bg-zinc-50 [background-image:var(--dotted-pattern-bg)]">

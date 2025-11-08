@@ -30,33 +30,15 @@ export interface WhiteboardState {
 export const useWhiteboardStore = create<WhiteboardState>((set) => ({
   clusters: [
     {
-      name: 'Team',
+      name: 'The Founding Team',
       props: [
-        { id: 'alice', type: 'card', color: 'blue', text: 'Alice', tag: null },
-        { id: 'bob', type: 'card', color: 'red', text: 'Bob', tag: null },
-      ],
-    },
-    {
-      name: 'Management',
-      props: [
-        { id: 'ceo', type: 'card', color: 'yellow', text: 'CEO', tag: '🔥' },
-      ],
-    },
-    {
-      name: 'Engineering',
-      props: [
-        { id: 'dev1', type: 'card', color: 'green', text: 'Dev1', tag: null },
-        { id: 'dev2', type: 'card', color: 'blue', text: 'Dev2', tag: '💡' },
-      ],
-    },
-    {
-      name: 'Sales',
-      props: [
-        { id: 'sales1', type: 'card', color: 'red', text: 'Sales1', tag: null },
+        { id: 'maya', type: 'card', color: 'blue', text: 'Maya', tag: '💡' },
+        { id: 'diego', type: 'card', color: 'yellow', text: 'Diego', tag: null },
+        { id: 'priya', type: 'card', color: 'green', text: 'Priya', tag: null },
       ],
     },
   ],
-  caption: '',
+  caption: 'Three friends start a company in a garage',
 
   addCard: (card, clusterName = 'default') =>
     set((state) => {

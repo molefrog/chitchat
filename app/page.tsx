@@ -29,14 +29,14 @@ const conversations = [
 const integrations = [
   {
     id: "f0c37170-f799-46ad-8c63-d25c9ef402b7",
-    title: "15-Min Summary: Nov 8, 15:00-15:15 UTC",
+    title: "Three Profiles Flags Launched",
     description:
       "Three new employee profiles created (Harper Nguyen, Indira Kapoor, Samir Desai). Flags project updated with full team roster and planning doc. Website refresh pricing table v1 completed. Q4 lead gen landing page visuals drafted.",
     date: new Date("2025-11-08T15:16:11.43405+00:00"),
   },
   {
     id: "7d923cd0-c3b0-44c6-8d2e-e44472b420b4",
-    title: "Hourly Summary: Nov 8, 14:00-15:00 UTC",
+    title: "Hero Shipped Flags Begins",
     description:
       "Hero section shipped. Flags of the World project kicked off with cross-functional team assignments across Product, Marketing, and Ops.",
     date: new Date("2025-11-08T15:00:57.903589+00:00"),
@@ -146,7 +146,7 @@ export default function Dashboard() {
             {integrations.map((integration) => (
               <Link
                 key={integration.id}
-                href={`/chats/${integration.id}?title=${encodeURIComponent(integration.title)}`}
+                href={`/chats/${integration.id}?title=${encodeURIComponent(integration.title)}&demo=true`}
                 className="group block"
               >
                 <div className="overflow-hidden rounded-lg bg-zinc-100 px-6 py-6 flex items-center gap-8">
