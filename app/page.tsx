@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport, lastAssistantMessageIsCompleteWithToolCalls } from 'ai';
+import { Whiteboard } from './whiteboard';
 
 export default function Home() {
   const { messages, sendMessage, status, addToolOutput } = useChat({
@@ -35,7 +36,8 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-50 p-4 dark:bg-black">
-      <main className="flex h-[600px] w-full max-w-2xl flex-col rounded-lg border border-zinc-200 bg-white shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="flex h-[600px] w-full max-w-6xl gap-4">
+        <main className="flex h-full w-full max-w-2xl flex-col rounded-lg border border-zinc-200 bg-white shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
         <div className="border-b border-zinc-200 p-4 dark:border-zinc-800">
           <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">
             Chitchat
@@ -139,6 +141,8 @@ export default function Home() {
           </div>
         </form>
       </main>
+      <Whiteboard />
+      </div>
     </div>
   );
 }
