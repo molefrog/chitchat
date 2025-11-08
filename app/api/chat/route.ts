@@ -45,6 +45,14 @@ You are equipped with the tools for interacting with the whiteboard. Tools alway
 state of the whiteboard after the action.
 
 You can execute multiple actions in one turn, a user can also ask to change something.
+
+# Proactivity & Traits
+- You are proactive at creating visuals, you don't need confirmation from the user. You always start
+with best assumption, if the user meant something else, they will tell you and you will adjust.
+- You are very creative and think outside of the box.
+- You ARE NOT boring, you are always engaging and interesting to talk to.
+- You are good at storytelling, you come up with good example names. If the user didn't provide enough context,
+you will come up with good example names and scenarios.
 `,
 
     tools: {
@@ -81,7 +89,10 @@ You can execute multiple actions in one turn, a user can also ask to change some
           "Update a card on the whiteboard. Can set/update the tag or move the card to a different cluster.",
         inputSchema: z.object({
           id: z.string().describe("ID of the card to update"),
-          tag: z.string().optional().describe("Emoji tag to add/update on the card (e.g., 🔥, 💡, 🛑)"),
+          tag: z
+            .string()
+            .optional()
+            .describe("Emoji tag to add/update on the card (e.g., 🔥, 💡, 🛑)"),
           cluster: z.string().optional().describe("Cluster ID to move the card to"),
         }),
       },
@@ -98,7 +109,8 @@ You can execute multiple actions in one turn, a user can also ask to change some
         }),
       },
       clearWhiteboard: {
-        description: "Clear the entire whiteboard, removing all clusters and cards. Use this to start fresh.",
+        description:
+          "Clear the entire whiteboard, removing all clusters and cards. Use this to start fresh.",
         inputSchema: z.object({}),
       },
     },

@@ -64,7 +64,11 @@ export default function Home() {
           input.cluster
         );
 
-        const whiteboardState = JSON.stringify({ clusters }, null, 2);
+        const whiteboardState = JSON.stringify(
+          { clusters: useWhiteboardStore.getState().clusters },
+          null,
+          2
+        );
         addToolOutput({
           tool: 'addCard',
           toolCallId: toolCall.toolCallId,
@@ -87,7 +91,11 @@ export default function Home() {
           updateCardInStore(input.id, { tag: input.tag });
         }
 
-        const whiteboardState = JSON.stringify({ clusters }, null, 2);
+        const whiteboardState = JSON.stringify(
+          { clusters: useWhiteboardStore.getState().clusters },
+          null,
+          2
+        );
         addToolOutput({
           tool: 'updateCard',
           toolCallId: toolCall.toolCallId,
@@ -100,7 +108,11 @@ export default function Home() {
 
         removeCardFromStore(input.id);
 
-        const whiteboardState = JSON.stringify({ clusters }, null, 2);
+        const whiteboardState = JSON.stringify(
+          { clusters: useWhiteboardStore.getState().clusters },
+          null,
+          2
+        );
         addToolOutput({
           tool: 'removeCard',
           toolCallId: toolCall.toolCallId,
@@ -113,7 +125,11 @@ export default function Home() {
 
         removeClusterFromStore(input.id);
 
-        const whiteboardState = JSON.stringify({ clusters }, null, 2);
+        const whiteboardState = JSON.stringify(
+          { clusters: useWhiteboardStore.getState().clusters },
+          null,
+          2
+        );
         addToolOutput({
           tool: 'removeCluster',
           toolCallId: toolCall.toolCallId,
@@ -124,10 +140,15 @@ export default function Home() {
       if (toolCall.toolName === 'clearWhiteboard') {
         clearWhiteboard();
 
+        const whiteboardState = JSON.stringify(
+          { clusters: useWhiteboardStore.getState().clusters },
+          null,
+          2
+        );
         addToolOutput({
           tool: 'clearWhiteboard',
           toolCallId: toolCall.toolCallId,
-          output: '{"clusters":[]}',
+          output: whiteboardState,
         });
       }
     },
@@ -172,32 +193,33 @@ export default function Home() {
                     case 'text':
                       return <span key={index}>{part.text}</span>;
 
-                    case 'tool-logMessage': {
+                    case 'tool-getWhiteboard':
+                    case 'tool-addCard':
+                    case 'tool-updateCard':
+                    case 'tool-removeCard':
+                    case 'tool-removeCluster':
+                    case 'tool-clearWhiteboard': {
                       const callId = part.toolCallId;
+                      const toolName = part.type.replace('tool-', '');
 
                       switch (part.state) {
                         case 'input-streaming':
-                          return (
-                            <div key={callId} className="text-sm opacity-70">
-                              Preparing to log message...
-                            </div>
-                          );
                         case 'input-available':
                           return (
-                            <div key={callId} className="text-sm opacity-70">
-                              Logging message to console...
+                            <div key={callId} className="text-xs opacity-60 italic">
+                              🔧 {toolName}
                             </div>
                           );
                         case 'output-available':
                           return (
-                            <div key={callId} className="text-sm opacity-70">
-                              {String(part.output)}
+                            <div key={callId} className="text-xs opacity-60 italic">
+                              ✓ {toolName}
                             </div>
                           );
                         case 'output-error':
                           return (
-                            <div key={callId} className="text-sm text-red-500">
-                              Error: {part.errorText}
+                            <div key={callId} className="text-xs text-red-500">
+                              ✗ {toolName}: {part.errorText}
                             </div>
                           );
                       }
