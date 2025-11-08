@@ -174,7 +174,7 @@ export default function ChatPage() {
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 text-lg">
               {messages.length === 0 && (
                 <div className="flex h-full items-center justify-center text-zinc-400">
                   Start a conversation...
@@ -260,7 +260,7 @@ export default function ChatPage() {
                 <button
                   type="submit"
                   disabled={status !== "ready"}
-                  className="rounded-lg text-lg font-medium text-white transition-colors disabled:opacity-50 px-4 py-2"
+                  className="cursor-pointer rounded-lg text-lg font-medium text-white transition-colors disabled:opacity-50 px-4 py-2"
                   style={{
                     background: "blue",
                     boxShadow: "rgb(3, 18, 152) 0px -2px 0px 3px inset",
