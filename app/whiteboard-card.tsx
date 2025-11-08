@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "motion/react";
 import type { Card, CardColor } from "./whiteboard-store";
 
 const colorClasses: Record<CardColor, string> = {
@@ -11,7 +12,12 @@ const colorClasses: Record<CardColor, string> = {
 
 export function WhiteboardCard({ card }: { card: Card }) {
   return (
-    <div
+    <motion.div
+      layoutId={card.id}
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.8 }}
+      transition={{ duration: 0.3 }}
       className={`relative rounded-lg border-5 px-3 py-2 text-sm font-medium aspect-2/3 shadow-ds-border flex items-center justify-center ${
         colorClasses[card.color]
       }`}
@@ -24,6 +30,6 @@ export function WhiteboardCard({ card }: { card: Card }) {
           {card.tag}
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }

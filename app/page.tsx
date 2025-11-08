@@ -82,7 +82,13 @@ export default function Dashboard() {
             >
               <div className="overflow-hidden rounded-lg bg-zinc-100 flex gap-4 p-2.5 items-center relative">
                 <div className="aspect-square w-26 h-26 rounded-lg bg-white shadow-ds-border-small p-1 -rotate-1">
-                  <div className="w-full h-full bg-zinc-200 rounded-md"></div>
+                  <Image
+                    src="/thumb.png"
+                    alt={conversation.title}
+                    width={104}
+                    height={104}
+                    className="w-full h-full object-cover rounded-md"
+                  />
                 </div>
                 <div className="ml-2 flex-1">
                   <p className="mt-1 text-lg/snug text-zinc-900 font-medium line-clamp-2">

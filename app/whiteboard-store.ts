@@ -78,21 +78,25 @@ export const useWhiteboardStore = create<WhiteboardState>((set) => ({
 
   updateCard: (cardId, updates) =>
     set((state) => {
-      const newClusters = state.clusters.map((cluster) => ({
-        ...cluster,
-        props: cluster.props.map((card) =>
-          card.id === cardId ? { ...card, ...updates } : card
-        ),
-      }));
+      const newClusters = state.clusters
+        .map((cluster) => ({
+          ...cluster,
+          props: cluster.props.map((card) =>
+            card.id === cardId ? { ...card, ...updates } : card
+          ),
+        }))
+        .filter((cluster) => cluster.props.length > 0);
       return { clusters: newClusters };
     }),
 
   removeCard: (cardId) =>
     set((state) => ({
-      clusters: state.clusters.map((cluster) => ({
-        ...cluster,
-        props: cluster.props.filter((card) => card.id !== cardId),
-      })),
+      clusters: state.clusters
+        .map((cluster) => ({
+          ...cluster,
+          props: cluster.props.filter((card) => card.id !== cardId),
+        }))
+        .filter((cluster) => cluster.props.length > 0),
     })),
 
   removeCluster: (clusterName) =>
@@ -103,17 +107,19 @@ export const useWhiteboardStore = create<WhiteboardState>((set) => ({
   moveCardToCluster: (cardId, targetClusterName) =>
     set((state) => {
       let cardToMove: Card | null = null;
-      const newClusters = state.clusters.map((cluster) => {
-        const card = cluster.props.find((c) => c.id === cardId);
-        if (card) {
-          cardToMove = card;
-          return {
-            ...cluster,
-            props: cluster.props.filter((c) => c.id !== cardId),
-          };
-        }
-        return cluster;
-      });
+      const newClusters = state.clusters
+        .map((cluster) => {
+          const card = cluster.props.find((c) => c.id === cardId);
+          if (card) {
+            cardToMove = card;
+            return {
+              ...cluster,
+              props: cluster.props.filter((c) => c.id !== cardId),
+            };
+          }
+          return cluster;
+        })
+        .filter((cluster) => cluster.props.length > 0);
 
       if (!cardToMove) return state;
 

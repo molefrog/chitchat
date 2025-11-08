@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimatePresence } from "motion/react";
 import { useWhiteboardStore } from "./whiteboard-store";
 import { WhiteboardCard } from "./whiteboard-card";
 
@@ -12,21 +13,23 @@ export function Whiteboard() {
         <div
           className="grid gap-4"
           style={{
-            gridTemplateColumns: `repeat(${Math.min(clusters.length, 2)}, auto)`,
+            gridTemplateColumns: `repeat(${Math.min(clusters.length, 2)}, minmax(0, 1fr))`,
           }}
         >
           {clusters.map((cluster) => (
             <div
               key={cluster.name}
-              className="flex flex-col gap-2 rounded-2xl bg-slate-400/10 p-4 w-fit"
+              className="flex flex-col gap-2 rounded-2xl bg-slate-400/10 p-4"
             >
               <div className="text-base font-bold uppercase tracking-wide text-zinc-600 mb-2">
                 {cluster.name}
               </div>
               <div className="grid grid-cols-4 gap-1.5">
-                {cluster.props.map((card) => (
-                  <WhiteboardCard key={card.id} card={card} />
-                ))}
+                <AnimatePresence mode="popLayout">
+                  {cluster.props.map((card) => (
+                    <WhiteboardCard key={card.id} card={card} />
+                  ))}
+                </AnimatePresence>
               </div>
             </div>
           ))}
