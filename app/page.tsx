@@ -4,8 +4,12 @@ import { useState } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport, lastAssistantMessageIsCompleteWithToolCalls } from 'ai';
 import { Whiteboard } from './whiteboard';
+import { useWhiteboardStore } from './whiteboard-store';
 
 export default function Home() {
+  const clusters = useWhiteboardStore((state) => state.clusters);
+  const addCardToStore = useWhiteboardStore((state) => state.addCard);
+
   const { messages, sendMessage, status, addToolOutput } = useChat({
     transport: new DefaultChatTransport({
       api: '/api/chat',
@@ -28,6 +32,31 @@ export default function Home() {
           tool: 'logMessage',
           toolCallId: toolCall.toolCallId,
           output: 'Message logged to console',
+        });
+      }
+
+      if (toolCall.toolName === 'getWhiteboard') {
+        const whiteboardState = JSON.stringify({ clusters }, null, 2);
+
+        addToolOutput({
+          tool: 'getWhiteboard',
+          toolCallId: toolCall.toolCallId,
+          output: whiteboardState,
+        });
+      }
+
+      if (toolCall.toolName === 'addCard') {
+        const { id, color, text, cluster } = toolCall.input;
+
+        addCardToStore(
+          { id, type: 'card', color, text, tag: null },
+          cluster
+        );
+
+        addToolOutput({
+          tool: 'addCard',
+          toolCallId: toolCall.toolCallId,
+          output: `Card "${text}" with id "${id}" added successfully`,
         });
       }
     },

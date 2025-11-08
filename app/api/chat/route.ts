@@ -18,6 +18,19 @@ export async function POST(req: Request) {
           message: z.string().describe('The message to log to the console.'),
         }),
       },
+      getWhiteboard: {
+        description: 'Get the current state of the whiteboard with all clusters and cards.',
+        inputSchema: z.object({}),
+      },
+      addCard: {
+        description: 'Add a new card to the whiteboard. Cards are displayed as colored stickers with text.',
+        inputSchema: z.object({
+          id: z.string().describe('Unique identifier for the card'),
+          color: z.enum(['red', 'blue', 'green', 'yellow']).describe('Color of the card'),
+          text: z.string().describe('Short text to display on the card (e.g., name, label, concept)'),
+          cluster: z.string().optional().describe('Optional cluster ID to add the card to. Defaults to "default" if not specified.'),
+        }),
+      },
     },
   });
 
