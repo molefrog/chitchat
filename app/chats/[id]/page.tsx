@@ -215,19 +215,28 @@ export default function ChatPage() {
                             case "input-streaming":
                             case "input-available":
                               return (
-                                <div key={callId} className="text-xs opacity-60 italic">
+                                <div
+                                  key={callId}
+                                  className="text-base bg-white shadow-ds-border rounded-full inline-block font-medium italic px-3 py-px mb-1 mr-1"
+                                >
                                   🔧 {toolName}
                                 </div>
                               );
                             case "output-available":
                               return (
-                                <div key={callId} className="text-xs opacity-60 italic">
+                                <div
+                                  key={callId}
+                                  className="text-base bg-white shadow-ds-border rounded-full inline-block font-medium italic px-3 py-px mb-1 mr-1"
+                                >
                                   ✓ {toolName}
                                 </div>
                               );
                             case "output-error":
                               return (
-                                <div key={callId} className="text-xs text-red-500">
+                                <div
+                                  key={callId}
+                                  className="text-base bg-white shadow-ds-border rounded-full inline-block font-medium text-red-500"
+                                >
                                   ✗ {toolName}: {part.errorText}
                                 </div>
                               );
