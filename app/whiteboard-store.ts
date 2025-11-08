@@ -11,64 +11,59 @@ export interface Card {
 }
 
 export interface Cluster {
-  id: string;
-  label?: string;
+  name: string;
   props: Card[];
 }
 
 export interface WhiteboardState {
   clusters: Cluster[];
-  addCard: (card: Card, clusterId?: string) => void;
+  addCard: (card: Card, clusterName?: string) => void;
   updateCard: (cardId: string, updates: Partial<Omit<Card, 'id' | 'type'>>) => void;
   removeCard: (cardId: string) => void;
-  removeCluster: (clusterId: string) => void;
-  moveCardToCluster: (cardId: string, targetClusterId: string) => void;
+  removeCluster: (clusterName: string) => void;
+  moveCardToCluster: (cardId: string, targetClusterName: string) => void;
   clearWhiteboard: () => void;
 }
 
 export const useWhiteboardStore = create<WhiteboardState>((set) => ({
   clusters: [
     {
-      id: 'team',
-      label: 'Team',
+      name: 'Team',
       props: [
         { id: 'alice', type: 'card', color: 'blue', text: 'Alice', tag: null },
         { id: 'bob', type: 'card', color: 'red', text: 'Bob', tag: null },
       ],
     },
     {
-      id: 'management',
-      label: 'Management',
+      name: 'Management',
       props: [
         { id: 'ceo', type: 'card', color: 'yellow', text: 'CEO', tag: '🔥' },
       ],
     },
     {
-      id: 'engineering',
-      label: 'Engineering',
+      name: 'Engineering',
       props: [
         { id: 'dev1', type: 'card', color: 'green', text: 'Dev1', tag: null },
         { id: 'dev2', type: 'card', color: 'blue', text: 'Dev2', tag: '💡' },
       ],
     },
     {
-      id: 'sales',
-      label: 'Sales',
+      name: 'Sales',
       props: [
         { id: 'sales1', type: 'card', color: 'red', text: 'Sales1', tag: null },
       ],
     },
   ],
 
-  addCard: (card, clusterId = 'default') =>
+  addCard: (card, clusterName = 'default') =>
     set((state) => {
-      const clusterIndex = state.clusters.findIndex((c) => c.id === clusterId);
+      const clusterIndex = state.clusters.findIndex((c) => c.name === clusterName);
       if (clusterIndex === -1) {
-        // Create default cluster if it doesn't exist
+        // Create cluster if it doesn't exist
         return {
           clusters: [
             ...state.clusters,
-            { id: 'default', props: [card] },
+            { name: clusterName, props: [card] },
           ],
         };
       }
@@ -100,12 +95,12 @@ export const useWhiteboardStore = create<WhiteboardState>((set) => ({
       })),
     })),
 
-  removeCluster: (clusterId) =>
+  removeCluster: (clusterName) =>
     set((state) => ({
-      clusters: state.clusters.filter((cluster) => cluster.id !== clusterId),
+      clusters: state.clusters.filter((cluster) => cluster.name !== clusterName),
     })),
 
-  moveCardToCluster: (cardId, targetClusterId) =>
+  moveCardToCluster: (cardId, targetClusterName) =>
     set((state) => {
       let cardToMove: Card | null = null;
       const newClusters = state.clusters.map((cluster) => {
@@ -122,7 +117,7 @@ export const useWhiteboardStore = create<WhiteboardState>((set) => ({
 
       if (!cardToMove) return state;
 
-      const targetIndex = newClusters.findIndex((c) => c.id === targetClusterId);
+      const targetIndex = newClusters.findIndex((c) => c.name === targetClusterName);
       if (targetIndex === -1) return state;
 
       newClusters[targetIndex] = {

@@ -30,9 +30,11 @@ Available props:
   - "tag": optional only symbol tag that can be added to the card later on. Like "🛑" or "🔥" or "💡" or "🔍" etc. (optional) Tags are used to update the card after some action for example.
 
 Layout:
-- Props are displayed on a canvas in clusters. A clusters is a ordered list of props.
-- Empty whiteboard contains only one cluster with id "default"
+- Props are displayed on a canvas in clusters. A cluster is an ordered list of props with a name.
+- Cluster names are used as identifiers (e.g., "Engineering", "Sales", "Team")
+- Empty whiteboard contains only one cluster named "default"
 - New cards by default are added to the "default" cluster
+- Clusters are automatically created when you add a card with a new cluster name
 - Clusters can be removed, cards can be moved to different clusters
 - When all cards are removed from a cluster, the cluster automatically disappears
 
@@ -92,7 +94,7 @@ you will come up with good example names and scenarios.
             .string()
             .optional()
             .describe(
-              'Optional cluster ID to add the card to. Defaults to "default" if not specified.'
+              'Optional cluster name to add the card to (e.g., "Engineering", "Sales"). Defaults to "default" if not specified. If the cluster doesn\'t exist, it will be created automatically.'
             ),
         }),
       },
@@ -105,7 +107,7 @@ you will come up with good example names and scenarios.
             .string()
             .optional()
             .describe("Emoji tag to add/update on the card (e.g., 🔥, 💡, 🛑)"),
-          cluster: z.string().optional().describe("Cluster ID to move the card to"),
+          cluster: z.string().optional().describe("Cluster name to move the card to (e.g., 'Engineering', 'Sales')"),
         }),
       },
       removeCard: {
@@ -117,7 +119,7 @@ you will come up with good example names and scenarios.
       removeCluster: {
         description: "Remove an entire cluster from the whiteboard.",
         inputSchema: z.object({
-          id: z.string().describe("ID of the cluster to remove"),
+          name: z.string().describe("Name of the cluster to remove (e.g., 'Engineering', 'Sales')"),
         }),
       },
       clearWhiteboard: {

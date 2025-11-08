@@ -127,9 +127,9 @@ export default function ChatPage() {
       }
 
       if (toolCall.toolName === "removeCluster") {
-        const input = toolCall.input as { id: string };
+        const input = toolCall.input as { name: string };
 
-        removeClusterFromStore(input.id);
+        removeClusterFromStore(input.name);
 
         const whiteboardState = JSON.stringify(
           { clusters: useWhiteboardStore.getState().clusters },

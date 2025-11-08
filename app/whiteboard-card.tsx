@@ -16,10 +16,14 @@ export function WhiteboardCard({ card }: { card: Card }) {
         colorClasses[card.color]
       }`}
     >
-      <div className="text-zinc-900 text-lg font-bold [text-shadow:0.5px_0.5px_0px_rgba(255,255,255,1)] text-center">
+      <div className="text-zinc-900 text-base font-bold [text-shadow:0.5px_0.5px_0px_rgba(255,255,255,1)] text-center rotate-3">
         {card.text}
       </div>
-      {card.tag && <div className="absolute -right-1 -top-1 text-lg">{card.tag}</div>}
+      {card.tag && (
+        <div className="absolute -right-5 -top-4 text-xl rounded-full bg-white h-10 w-10 flex items-center justify-center border border-zinc-300">
+          {card.tag}
+        </div>
+      )}
     </div>
   );
 }
